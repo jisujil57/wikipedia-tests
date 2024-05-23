@@ -49,10 +49,10 @@ public class BaseMobileTest {
 
     @AfterEach
     void afterEach() {
-        String sessionId = Selenide.sessionId().toString();
         Attach.pageMobileSource();
-
+        String sessionId = Selenide.sessionId().toString();
         closeWebDriver();
+
         if (Objects.equals(mobileConfig.executionPlatform(), "browserstack")) {
             Attach.addBrowserstackVideo(sessionId);
         }
