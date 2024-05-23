@@ -40,3 +40,4 @@ bin/
 .DS_Store
 /logs/
 /.idea/
+/src/test/resources/config/mobile/browserstack/browserstack.properties
