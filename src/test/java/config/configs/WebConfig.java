@@ -10,7 +10,7 @@ import org.aeonbits.owner.Config;
 public interface WebConfig extends Config {
 
     @Key("browserName")
-    String browser();
+    String browserName();
 
     @Key("browser.version")
     float browserVersion();

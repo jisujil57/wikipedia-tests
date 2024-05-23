@@ -5,6 +5,7 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import config.configs.StageConfig;
 import config.configs.WebConfig;
+import helpers.Attach;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.AfterEach;
@@ -14,7 +15,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import java.util.Map;
 
 public class BaseWebTest {
-    public static String BROWSER;
+    public static String BROWSER_NAME;
     public static float BROWSER_VERSION;
     public static String BROWSER_SIZE;
     public static boolean IS_REMOTE_EXECUTION;
@@ -26,7 +27,7 @@ public class BaseWebTest {
         WebConfig webConfig = ConfigFactory.create(WebConfig.class);
         StageConfig stageConfig = ConfigFactory.create(StageConfig.class);
 
-        BROWSER = webConfig.browser();
+        BROWSER_NAME = webConfig.browserName();
         BROWSER_VERSION = webConfig.browserVersion();
         BROWSER_SIZE = webConfig.browserSize();
         IS_REMOTE_EXECUTION = webConfig.isRemoteExecution();
@@ -39,13 +40,18 @@ public class BaseWebTest {
 
     @AfterEach
     void tearDown() {
+        Attach.screenshotAs("Last screenshot");
+        Attach.pageSource();
+        Attach.browserConsoleLogs();
+        Attach.addSelenoidVideo();
+
         Selenide.clearBrowserCookies();
         Selenide.clearBrowserLocalStorage();
         Selenide.closeWebDriver();
     }
 
     private static void setupSelenide() {
-        Configuration.browser = BROWSER;
+        Configuration.browser = BROWSER_NAME;
         Configuration.browserSize = BROWSER_SIZE;
         Configuration.baseUrl = BASE_URL;
         Configuration.pageLoadStrategy = "eager";
@@ -67,7 +73,7 @@ public class BaseWebTest {
     private static void printUiConfig() {
         System.out.println("RUN UI TESTS");
         System.out.printf("Base URL:         %s%n", BASE_URL);
-        System.out.printf("Browser name:     %s%n", BROWSER);
+        System.out.printf("Browser name:     %s%n", BROWSER_NAME);
         System.out.printf("Browser version: %.2f%n", BROWSER_VERSION);
         System.out.printf("Browser size:     %s%n", BROWSER_SIZE);
         System.out.printf("Selenoid URL:     %s%n", SELENOID_URL);

@@ -54,7 +54,7 @@ public class BaseMobileTest {
 
         closeWebDriver();
         if (Objects.equals(mobileConfig.executionPlatform(), "browserstack")) {
-            Attach.addVideo(sessionId);
+            Attach.addBrowserstackVideo(sessionId);
         }
     }
 }
