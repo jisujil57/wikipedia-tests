@@ -2,16 +2,17 @@ package tests.api;
 
 
 import helpers.FieldsChecker;
+import io.qameta.allure.Epic;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import tests.api.steps.SearchStep;
 
+@Epic("api")
 @Tag("api_test")
 @DisplayName("Поиск статьи")
-public class WikipediaApiTest extends BaseApiTest{
+public class WikipediaApiTest extends BaseApiTest {
 
     SearchStep searchStep = new SearchStep();
     FieldsChecker fieldsChecker = new FieldsChecker();
