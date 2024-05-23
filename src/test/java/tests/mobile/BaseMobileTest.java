@@ -50,7 +50,7 @@ public class BaseMobileTest {
     @AfterEach
     void afterEach() {
         String sessionId = Selenide.sessionId().toString();
-        Attach.pageSource();
+        Attach.pageMobileSource();
 
         closeWebDriver();
         if (Objects.equals(mobileConfig.executionPlatform(), "browserstack")) {

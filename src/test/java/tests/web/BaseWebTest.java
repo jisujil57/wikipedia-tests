@@ -41,7 +41,7 @@ public class BaseWebTest {
     @AfterEach
     void tearDown() {
         Attach.screenshotAs("Last screenshot");
-        Attach.pageSource();
+        Attach.pageWebSource();
         Attach.browserConsoleLogs();
         Attach.addSelenoidVideo();
 

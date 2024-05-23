@@ -22,7 +22,12 @@ public class Attach {
     }
 
     @Attachment(value = "Page source", type = "text/html")
-    public static byte[] pageSource() {
+    public static byte[] pageWebSource() {
+        return getWebDriver().getPageSource().getBytes(StandardCharsets.UTF_8);
+    }
+
+    @Attachment(value = "Page source", type = "text/plain")
+    public static byte[] pageMobileSource() {
         return getWebDriver().getPageSource().getBytes(StandardCharsets.UTF_8);
     }
 
