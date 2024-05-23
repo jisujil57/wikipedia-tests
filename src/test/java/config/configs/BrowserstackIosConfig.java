@@ -5,9 +5,9 @@ import org.aeonbits.owner.Config;
 @Config.LoadPolicy(Config.LoadType.MERGE)
 @Config.Sources({
         "system:properties",
-        "classpath:config/mobile/browserstack/${platform}.properties"
+        "classpath:config/mobile/browserstack/ios.properties"
 })
-public interface BrowserstackAndroidConfig extends Config {
+public interface BrowserstackIosConfig extends Config {
 
     @Key("emulator.url")
     String emulatorUrl();

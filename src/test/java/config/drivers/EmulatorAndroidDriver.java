@@ -1,51 +1,66 @@
 package config.drivers;
 
 import com.codeborne.selenide.WebDriverProvider;
-import config.configs.BrowserstackAndroidConfig;
-import config.configs.BrowserstackConfig;
+import config.configs.EmulatorAndroidConfig;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.options.UiAutomator2Options;
 import org.aeonbits.owner.ConfigFactory;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.options.UiAutomator2Options;
 
 import javax.annotation.Nonnull;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 
-public class BrowserstackAndroidDriver implements WebDriverProvider {
+import static io.appium.java_client.remote.AutomationName.ANDROID_UIAUTOMATOR2;
+import static io.appium.java_client.remote.MobilePlatform.ANDROID;
+import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
-    BrowserstackConfig browserstackConfig = ConfigFactory.create(BrowserstackConfig.class, System.getProperties());
-    BrowserstackAndroidConfig browserstackAndroidConfig = ConfigFactory.create(BrowserstackAndroidConfig.class, System.getProperties());
+public class EmulatorAndroidDriver implements WebDriverProvider {
+
+    EmulatorAndroidConfig emulatorAndroidConfig = ConfigFactory.create(EmulatorAndroidConfig.class, System.getProperties());
 
     @Nonnull
     @Override
     public WebDriver createDriver(@Nonnull Capabilities capabilities) {
-        DesiredCapabilities caps = new DesiredCapabilities();
         UiAutomator2Options options = new UiAutomator2Options();
 
-        // Устанавливаем общие параметры
-        options.setPlatformName("Android");
-        options.setPlatformVersion(browserstackAndroidConfig.deviceVersion());
-        options.setDeviceName(browserstackAndroidConfig.deviceName());
-        options.setApp(browserstackAndroidConfig.appUrl());
+        options.setAutomationName(ANDROID_UIAUTOMATOR2)
+                .setPlatformName(ANDROID)
+                .setPlatformVersion(emulatorAndroidConfig.deviceVersion())
+                .setDeviceName(emulatorAndroidConfig.deviceName())
+                .setApp(getAppPath())
+                .setAppPackage("org.wikipedia.alpha")
+                .setAppActivity("org.wikipedia.main.MainActivity");
 
-        // Добавляем опции для BrowserStack
-        HashMap<String, Object> browserstackOptions = new HashMap<>();
-        browserstackOptions.put("projectName", "BrowserStack Sample");
-        browserstackOptions.put("buildName", "bstack-demo");
-        browserstackOptions.put("sessionName", "first_test");
-        browserstackOptions.put("userName", browserstackConfig.username());
-        browserstackOptions.put("accessKey", browserstackConfig.accessKey());
+        return new AndroidDriver(getAppiumServerUrl(emulatorAndroidConfig.emulatorUrl()), options);
+    }
 
-        caps.setCapability("bstack:options", browserstackOptions);
-
+    public static URL getAppiumServerUrl(String baseUrl) {
         try {
-            return new AndroidDriver(new URL("https://" + browserstackConfig.username() + ":" + browserstackConfig.accessKey() + "@hub.browserstack.com/wd/hub"), options);
+            return new URL(baseUrl + "/wd/hub");
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String getAppPath() {
+        String appVersion = "app-alpha-universal-release.apk";
+        String appUrl = "https://github.com/wikimedia/apps-android-wikipedia" +
+                "/releases/download/latest/" + appVersion;
+        String appPath = "src/test/resources/apps/" + appVersion;
+
+        File app = new File(appPath);
+        if (!app.exists()) {
+            try (InputStream in = new URL(appUrl).openStream()) {
+                copyInputStreamToFile(in, app);
+            } catch (IOException e) {
+                throw new AssertionError("Failed to download application", e);
+            }
+        }
+        return app.getAbsolutePath();
     }
 }

@@ -1,19 +1,90 @@
 plugins {
     id 'java'
+    id 'io.qameta.allure' version '2.11.2'
+    id "io.freefair.lombok" version "6.0.0-m2"
 }
 
 group = 'org.example'
 version = '1.0-SNAPSHOT'
 
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
 repositories {
     mavenCentral()
 }
 
-dependencies {
-    testImplementation platform('org.junit:junit-bom:5.9.1')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+def selenideVersion = "7.0.6",
+    restAssuredVersion = "5.3.0",
+    allureVersion = "2.21.0",
+    junitVersion = "5.9.3",
+    slf4jVersion = "2.0.7",
+    ownerVersion = "1.0.12",
+    appiumVersion = "8.3.0"
+
+allure {
+    report {
+        version.set(allureVersion)
+    }
+    adapter {
+        aspectjWeaver.set(true)
+        frameworks {
+            junit5 {
+                adapterVersion.set(allureVersion)
+            }
+        }
+    }
 }
 
-test {
+dependencies {
+    testImplementation(
+            "org.junit.jupiter:junit-jupiter:$junitVersion",
+
+            // selenide
+            "com.codeborne:selenide-appium:$selenideVersion",
+            "io.qameta.allure:allure-selenide:$allureVersion",
+
+            // appium
+//            "io.appium:java-client:$appiumVersion",
+//            "commons-io:commons-io:2.11.0",
+
+            // rest assured
+            "io.rest-assured:rest-assured:$restAssuredVersion",
+            "io.qameta.allure:allure-rest-assured:$allureVersion",
+
+            "org.aspectj:aspectjrt:1.9.7",
+            "commons-io:commons-io:2.11.0",
+            "org.slf4j:slf4j-simple:$slf4jVersion",
+            "org.aeonbits.owner:owner:$ownerVersion"
+    )
+}
+
+tasks.withType(Test).configureEach {
     useJUnitPlatform()
+    systemProperties(System.getProperties())
+
+    testLogging {
+        lifecycle {
+            events "started", "skipped", "failed", "standard_error", "standard_out"
+            exceptionFormat "short"
+        }
+    }
+}
+
+tasks.register('web_test', Test) {
+    useJUnitPlatform {
+        includeTags("web_test")
+    }
+}
+
+tasks.register('api_test', Test) {
+    useJUnitPlatform {
+        includeTags("api_test")
+    }
+}
+
+tasks.register('mobile_test', Test) {
+    useJUnitPlatform {
+        includeTags("mobile_test")
+    }
 }

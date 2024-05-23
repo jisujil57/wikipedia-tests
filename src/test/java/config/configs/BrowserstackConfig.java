@@ -1,8 +1,13 @@
-package config;
+package config.configs;
 
 import org.aeonbits.owner.Config;
 
-public interface BrowserStackConfig extends Config {
+@Config.LoadPolicy(Config.LoadType.MERGE)
+@Config.Sources({
+        "system:properties",
+        "classpath:config/mobile/browserstack/browserstack.properties"
+})
+public interface BrowserstackConfig extends Config {
     @Key("platform")
     String platform();
 

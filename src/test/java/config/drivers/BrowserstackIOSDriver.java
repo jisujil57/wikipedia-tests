@@ -1,38 +1,37 @@
 package config.drivers;
 
 import com.codeborne.selenide.WebDriverProvider;
-import config.configs.BrowserstackAndroidConfig;
 import config.configs.BrowserstackConfig;
+import config.configs.BrowserstackIosConfig;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.ios.options.XCUITestOptions;
 import org.aeonbits.owner.ConfigFactory;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.options.UiAutomator2Options;
 
 import javax.annotation.Nonnull;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 
-public class BrowserstackAndroidDriver implements WebDriverProvider {
+public class BrowserstackIOSDriver implements WebDriverProvider {
 
     BrowserstackConfig browserstackConfig = ConfigFactory.create(BrowserstackConfig.class, System.getProperties());
-    BrowserstackAndroidConfig browserstackAndroidConfig = ConfigFactory.create(BrowserstackAndroidConfig.class, System.getProperties());
+    BrowserstackIosConfig browserstackIosConfig = ConfigFactory.create(BrowserstackIosConfig.class, System.getProperties());
 
     @Nonnull
     @Override
     public WebDriver createDriver(@Nonnull Capabilities capabilities) {
         DesiredCapabilities caps = new DesiredCapabilities();
-        UiAutomator2Options options = new UiAutomator2Options();
 
-        // Устанавливаем общие параметры
-        options.setPlatformName("Android");
-        options.setPlatformVersion(browserstackAndroidConfig.deviceVersion());
-        options.setDeviceName(browserstackAndroidConfig.deviceName());
-        options.setApp(browserstackAndroidConfig.appUrl());
+        XCUITestOptions options = new XCUITestOptions();
 
-        // Добавляем опции для BrowserStack
+        options.setPlatformName("iOS");
+        options.setPlatformVersion(browserstackIosConfig.deviceVersion());
+        options.setDeviceName(browserstackIosConfig.deviceName());
+        options.setApp(browserstackIosConfig.appUrl());
+
         HashMap<String, Object> browserstackOptions = new HashMap<>();
         browserstackOptions.put("projectName", "BrowserStack Sample");
         browserstackOptions.put("buildName", "bstack-demo");

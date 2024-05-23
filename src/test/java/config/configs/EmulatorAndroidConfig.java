@@ -7,7 +7,7 @@ import org.aeonbits.owner.Config;
         "system:properties",
         "classpath:config/mobile/emulator/android.properties"
 })
-public interface EmulatorDeviceConfig extends Config {
+public interface EmulatorAndroidConfig extends Config {
 
     @Key("emulator.url")
     String emulatorUrl();
